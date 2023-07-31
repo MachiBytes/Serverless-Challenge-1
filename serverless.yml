@@ -1,0 +1,48 @@
+org: machibytes
+app: challenge1-sir-jamby
+service: challenge1-sir-jamby
+frameworkVersion: "3"
+
+provider:
+    name: aws
+    runtime: python3.8
+    region: ap-southeast-1
+    iam:
+        role:
+            statements:
+                - Effect: Allow
+                  Action:
+                      - dynamodb:DescribeTable
+                      - dynamodb:Query
+                      - dynamodb:Scan
+                      - dynamodb:GetItem
+                      - dynamodb:PutItem
+                  Resource: "*"
+    environment:
+        TABLE_NAME: "FLORES-Loyalty-Card-Table"
+
+functions:
+    hello:
+        handler: app/handlers/hello.handler
+        events:
+            - httpApi:
+                  path: /
+                  method: get
+    createCard:
+        handler: app/handlers/create_card.handler
+        events:
+            - httpApi:
+                  path: /loyalty-cards
+                  method: post
+    getAllCards:
+        handler: app/handlers/get_all_cards.handler
+        events:
+            - httpApi:
+                  path: /loyalty-cards
+                  method: get
+    getCard:
+        handler: app/handlers/get_card_by_id.handler
+        events:
+            - httpApi:
+                  path: /loyalty-cards/{id}
+                  method: get
